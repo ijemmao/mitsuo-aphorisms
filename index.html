@@ -32,6 +32,7 @@
     }
 
     li:hover {
+      color: #ed7737;
       color: rgb(101, 201, 255);
     }
   </style>
@@ -62,24 +63,68 @@
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script>
-    let currentAphorism = '1';
-    var renderer = new THREE.WebGLRenderer();
+    let currentAphorism = '2';
+    let renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+    let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
     camera.position.set(0, 0, 100);
     camera.lookAt(0, 0, 0);
     let controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.update();
-    var scene = new THREE.Scene();
+    let scene = new THREE.Scene();
+
+    let random = (min, max) => {
+      return Math.random() * (+max - +min) + +min; 
+    }
+
+    let generateLifeCubes = (count) => {
+      for (let j = 0; j < count; j++) {
+        const lifeCubes = new THREE.Group();
+          for (let i = 0; i < 7; i++) {
+            let geometry = new THREE.BoxGeometry(1, 1, 1);
+            let material = new THREE.MeshNormalMaterial();
+            let cube = new THREE.Mesh(geometry, material);
+            cube.position.set(i * 2, i * i / 4, 0);
+            lifeCubes.add(cube);
+            lifeCubes.position.set(random(-70, 70), random(-70, 70), random(-70, 70))
+          }
+          console.log(lifeCubes.position)
+          scene.add(lifeCubes)
+        }
+      }
+
+
+    const lifeCubes = new THREE.Group();
+    generateLifeCubes(300);
+      for (let i = 0; i < 7; i++) {
+        let geometry = new THREE.BoxGeometry(1, 1, 1);
+        let material = new THREE.MeshNormalMaterial();
+        let cube = new THREE.Mesh(geometry, material);
+        cube.position.set(i * 2, i * i / 4, 0);
+        lifeCubes.add(cube);
+      }
+    scene.add(lifeCubes);
+   
+
 
     let renderAphorism = (aphorism) => {
-      scene = new THREE.Scene();
+      
       if (aphorism === '1') {
-        var geometry = new THREE.BoxGeometry(1, 1, 1);
-        var material = new THREE.MeshNormalMaterial({ color: 0x00ff00 });
-        var cube = new THREE.Mesh(geometry, material);
+        scene.background = new THREE.Color(0x165b80)
+        let geometry = new THREE.SphereGeometry(5, 20, 20);
+        let material = new THREE.MeshNormalMaterial({side: THREE.BackSide });
+        let cube = new THREE.Mesh(geometry, material);
         scene.add(cube);
+      } else if (aphorism === '2') {
+        scene.background = new THREE.Color(0xed7737)
+        lifeCubes.position.set(lifeCubes.position.x - .05, lifeCubes.position.y - .05, lifeCubes.position.z)
+        
+        //  lifeCubes.forEach(cube => {
+        //    cube.position.set(cube.position.x - .03, cube.position.y - .03, cube.position.z)
+        //    scene.add(cube);
+
+        //  })
       }
     }
     
@@ -90,11 +135,13 @@
     }
     animate();
 
+    
     Array.from(document.getElementsByTagName('li')).forEach((element) => {
       element.addEventListener('click', (e) => {
         if (e.target.tagName === 'FONT') {
           const listItem = e.target.parentNode.parentNode;
           currentAphorism = listItem.id;
+          scene = new THREE.Scene();
         }
       })
     })
