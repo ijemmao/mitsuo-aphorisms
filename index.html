@@ -8,19 +8,61 @@
     body {
       margin: 0;
       background-color: #ffffff;
+      font-family: 'Avenir';
+      user-select: none;
     }
 
     canvas {
       width: 100%;
       height: 100%
     }
+
+    .aphorisms-container {
+      position: absolute;
+      color: white;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    li:hover {
+      color: rgb(101, 201, 255);
+    }
   </style>
 </head>
 
 <body>
+  <div class="aphorisms-container">
+    <h3>Aphorisms</h3>
+    <ul>
+      <li id="1">この世は私が私になるところあなたがあなたになるところ</li>
+      <li id="2">命いっぱい</li>
+      <li id="3">人のことじゃないんだよじぶんのことだよ</li>
+      <li id="4">あなたのこころがきれいだからなんでもきれいに見えるんだなあ</li>
+      <li id="5">経験してはじめて身につくんだなあ</li>
+      <li id="6">あなたの声を電話で聞いただけでその日一日心がなごむ理屈じゃねんだよなあ</li>
+      <li id="7"">どうでもいいものはどうでもいいんだよ一番大事なことに一番大事ないのちをかけてゆくことだ</li>
+      <li id="8">なんにも欲しがらぬとさが一番強い</li>
+      <li id="9">あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</li>
+      <li id="10">あたまじゃれかっているんだが</li>
+      <li id="11">人間人間人間第一</li>
+      <li id="12">本当のことがいちばんいい</li>
+      <li id="13">しあれせはいつも自分のこころが決める</li>
+      <li id="14">今が大事</li>
+      <li id="15">その時自分ならばどうする</li>
+
+    </ul>
+  </div>
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script>
+    let currentAphorism = '1';
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -29,23 +71,33 @@
     camera.lookAt(0, 0, 0);
     let controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.update();
-
-
-
     var scene = new THREE.Scene();
 
-    var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    var cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    let renderAphorism = (aphorism) => {
+      scene = new THREE.Scene();
+      if (aphorism === '1') {
+        var geometry = new THREE.BoxGeometry(1, 1, 1);
+        var material = new THREE.MeshNormalMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+      }
+    }
+    
     let animate = () => {
       requestAnimationFrame(animate);
-
+      renderAphorism(currentAphorism);
       renderer.render(scene, camera);
     }
     animate();
 
-
+    Array.from(document.getElementsByTagName('li')).forEach((element) => {
+      element.addEventListener('click', (e) => {
+        if (e.target.tagName === 'FONT') {
+          const listItem = e.target.parentNode.parentNode;
+          currentAphorism = listItem.id;
+        }
+      })
+    })
   </script>
 </body>
 
