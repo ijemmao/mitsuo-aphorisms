@@ -145,6 +145,18 @@
           currentAphorism = listItem.id;
           scene = new THREE.Scene();
           if (currentAphorism === '1') {
+            const planetGroup = new THREE.Group();
+            scene.background = new THREE.Color(0x000000)
+            let geometry = new THREE.SphereGeometry(5, 20, 20);
+            let material = new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 });
+            let cube = new THREE.Mesh(geometry, material);
+            planetGroup.add(cube);
+            geometry = new THREE.SphereGeometry(2, 20, 20);
+            material = new THREE.MeshNormalMaterial({ side: THREE.BackSide });
+            cube = new THREE.Mesh(geometry, material);
+            planetGroup.add(cube);
+            scene.add(planetGroup)
+            generateStars(1500);
           } else if (currentAphorism === '2') {
             const lifeCubes = new THREE.Group();
             generateLifeCubes(300);
@@ -177,6 +189,10 @@
             cube = new THREE.Mesh(geometry, material);
             cube.position.set(cube.position.x, cube.position.y - 1, cube.position.z);
             scene.add(cube)
+          } else if (currentAphorism === '4') {
+          
+          } else if (currentAphorism === '5') {
+            
           }
         }
       })
