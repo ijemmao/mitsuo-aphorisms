@@ -1,0 +1,1 @@
+# Aida Mitsuo Aphorisms
