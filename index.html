@@ -17,21 +17,25 @@
       height: 100%
     }
 
+    h1 {
+      padding-left: 30px;
+    }
+
     .aphorisms-container {
       position: absolute;
       color: white;
     }
 
-    ul {
-      list-style: none;
-    }
-
-    li {
+    .aphorism-container {
+      border: 1px solid white;
+      border-radius: 5px;
       cursor: pointer;
-      width: fit-content;
+      margin: 20px;
+      padding: 0 30px;
+      width: 600px;
     }
 
-    li:hover {
+    h3:hover {
       color: #ed7737;
       color: rgb(101, 201, 255);
     }
@@ -40,25 +44,32 @@
 
 <body>
   <div class="aphorisms-container">
-    <h3>Aphorisms</h3>
-    <ul>
-      <li id="1">この世は私が私になるところあなたがあなたになるところ</li>
-      <li id="2">いのちいっぱい</li>
-      <li id="3">ひとのことじゃないんだよじぶんのことだよ</li>
-      <li id="4">あなたのこころがきれいだからなんでもきれいに見えるんだなあ</li>
-      <li id="5">経験してはじめて身につくんだなあ</li>
-      <li id="6">あなたの声を電話で聞いただけでその日一日心がなごむ理屈じゃねんだよなあ</li>
-      <li id="7"">どうでもいいものはどうでもいいんだよいちばん大事なことに一番大事ないのちをかけてゆくことだ</li>
-      <li id="8">なんにも欲しがらぬとさが一番強い</li>
-      <li id="9">あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</li>
-      <li id="10">そのままでいいがな</li>
-      <li id="11">人間人間人間第一</li>
-      <li id="12">ほんとうのことがいちばんいい</li>
-      <li id="13">しあれせはいつもじぶんのこころがきめる</li>
-      <li id="14">いまが大事</li>
-      <li id="15">その時自分ならばどうする</li>
-
-    </ul>
+    <h1>Aphorisms</h1>
+    <div class="aphorism-container" id="1">
+      <h3>この世は私が私になるところあなたがあなたになるところ</h3>
+      <h3>なんにも欲しがらぬとさが一番強い</h3>
+      <h3>ほんとうのことがいちばんいい</h3>
+    </div>
+    <div class="aphorism-container" id="2">
+      <h3>しあれせはいつもじぶんのこころがきめる</h3>
+      <h3>そのままでいいがな</h3>
+      <h3>あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</h3>
+    </div>
+    <div class="aphorism-container" id="3">
+      <h3>いまが大事</h3>
+      <h3>いのちいっぱい</h3>
+      <h3>経験してはじめて身につくんだなあ</h3>
+      <h3>どうでもいいものはどうでもいいんだよいちばん大事なことに一番大事ないのちをかけてゆくことだ</h3>
+      <h3>その時自分ならばどうする</h3>
+    </div>
+    <div class="aphorism-container" id="4">
+      <h3>人間人間人間第一</h3>
+      <h3>ひとのことじゃないんだよじぶんのことだよ</h3>
+    </div>
+    <div class="aphorism-container" id="5">
+      <h3>あなたのこころがきれいだからなんでもきれいに見えるんだなあ</h3>
+      <h3>あなたの声を電話で聞いただけでその日一日心がなごむ理屈じゃねんだよなあ</h3>
+    </div>
   </div>
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
@@ -76,11 +87,6 @@
     let time = 0;
     const lifeCubes = new THREE.Group();
     const waves = new THREE.Group();
-    // let wave = null;
-    // let secondWave = null;
-    // let thirdWave = null;
-    // let path = null;
-    // let waveGeometry = null;
 
     function CustomSinCurve(scale, type) {
 
@@ -94,18 +100,14 @@
       CustomSinCurve.prototype.constructor = CustomSinCurve;
 
       CustomSinCurve.prototype.getPoint = function (t) {
-
-        // var tx = t * 3 - 1.5;
-        // var ty = Math.sin(2 * Math.PI * t);
-        // var tz = 0;
-        var tx = 1 * t * 3 - 1.5;
-        var ty = 0;
+        let tx = 1 * t * 3 - 1.5;
+        let ty = 0;
         if (this.type === 'first') {
           ty = Math.cos(Math.sin(time / 5) * Math.PI * t) * Math.sin(Math.cos(time / 5) * Math.PI * t);
         } else if (this.type === 'second') {
           ty = Math.cos(Math.cos(time) * Math.PI * t) * Math.sin(Math.sin(time) * Math.PI * t);
         }
-        var tz = 1;
+        let tz = 1;
 
         return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
 
@@ -132,9 +134,9 @@
 
     let generateStars = (count) => {
       for (let i = 0; i < count; i++) {
-        var geometry = new THREE.BoxGeometry(.1, .1, .1);
-        var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        var cube = new THREE.Mesh(geometry, material);
+        let geometry = new THREE.BoxGeometry(.1, .1, .1);
+        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        let cube = new THREE.Mesh(geometry, material);
         cube.position.set(random(-100, 100), random(-100, 100), random(-100, 100));
         scene.add(cube);
       }
@@ -185,79 +187,79 @@
     animate();
 
     
-    Array.from(document.getElementsByTagName('li')).forEach((element) => {
+    Array.from(document.getElementsByClassName('aphorism-container')).forEach((element) => {
       element.addEventListener('click', (e) => {
-        if (e.target.tagName === 'FONT') {
-          const listItem = e.target.parentNode.parentNode;
-          currentAphorism = listItem.id;
+          let selectedContainer = e.target;
+          if (e.target.tagName === 'H3') selectedContainer = e.target.parentNode
+          let currentAphorism = selectedContainer.id;
           scene = new THREE.Scene();
-          if (currentAphorism === '1') {
-            console.log('fds')
-            scene.background = new THREE.Color(0x000000);
-            const pinkPlanetGroup = new THREE.Group();
-            const greenPlanetGroup = new THREE.Group();
-            let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
-            pinkPlanetGroup.add(sphere);
-            sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-            pinkPlanetGroup.add(sphere);
-            sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00aff, transparent: true, opacity: 0.5 }));
-            greenPlanetGroup.add(sphere);
-            sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-            greenPlanetGroup.add(sphere);
-            scene.add(pinkPlanetGroup)
-            scene.add(greenPlanetGroup)
-            generateStars(1500);
-
-
-            
-          } else if (currentAphorism === '2') {
-            const lifeCubes = new THREE.Group();
-            generateLifeCubes(600);
-            for (let i = 0; i < 7; i++) {
-              let geometry = new THREE.BoxGeometry(1, 1, 1);
-              let material = new THREE.MeshNormalMaterial();
-              let cube = new THREE.Mesh(geometry, material);
-              cube.position.set(i * 2, i * i / 4, 0);
-              lifeCubes.add(cube);
-            }
-            scene.add(lifeCubes);
-          } else if (currentAphorism === '3') {
-            for (let i = 0; i < 20; i++) {
-              let geometry = new THREE.BoxGeometry(2, 2, 2);
-              let material = new THREE.MeshNormalMaterial();
-              let cube = new THREE.Mesh(geometry, material);
-              cube.position.set(Math.cos(360 / i) * 9, 0, Math.sin(360 / i) * 9);
-              scene.add(cube)
-            }
-            let geometry = new THREE.BoxGeometry(2, 2, 2);
-            let material = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5});
-            let cube = new THREE.Mesh(geometry, material);
-            scene.add(cube)
-            geometry = new THREE.BoxGeometry(.5, .5, .5);
-            material = new THREE.MeshNormalMaterial();
-            cube = new THREE.Mesh(geometry, material);
-            scene.add(cube)
-            geometry = new THREE.BoxGeometry(200, .1, 200);
-            material = new THREE.MeshDepthMaterial({ color: 0xaaaaaa });
-            cube = new THREE.Mesh(geometry, material);
-            cube.position.set(cube.position.x, cube.position.y - 1, cube.position.z);
-            scene.add(cube)
-          } else if (currentAphorism === '4') {
-            var material = new THREE.MeshNormalMaterial();
-            for (let i = -2; i < 2; i++) {
-              for (let j = -2; j < 2; j++) {
-                let wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), material);
-                wave.position.set(wave.position.x - i * 30, wave.position.y - j * 30, wave.position.z);
-                waves.add(wave);
+          switch (currentAphorism) {
+            case '1':
+              scene.background = new THREE.Color(0x000000);
+              const pinkPlanetGroup = new THREE.Group();
+              const greenPlanetGroup = new THREE.Group();
+              let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
+              pinkPlanetGroup.add(sphere);
+              sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+              pinkPlanetGroup.add(sphere);
+              sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00aff, transparent: true, opacity: 0.5 }));
+              greenPlanetGroup.add(sphere);
+              sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+              greenPlanetGroup.add(sphere);
+              scene.add(pinkPlanetGroup)
+              scene.add(greenPlanetGroup)
+              generateStars(1500);
+            break;
+            case '2':
+              const lifeCubes = new THREE.Group();
+              generateLifeCubes(600);
+              for (let i = 0; i < 7; i++) {
+                let geometry = new THREE.BoxGeometry(1, 1, 1);
+                let material = new THREE.MeshNormalMaterial();
+                let cube = new THREE.Mesh(geometry, material);
+                cube.position.set(i * 2, i * i / 4, 0);
+                lifeCubes.add(cube);
               }
-            }
-            scene.add(waves);
-          } else if (currentAphorism === '5') {
-
+              scene.add(lifeCubes);
+            break;
+            case '3':
+              for (let i = 0; i < 20; i++) {
+                let geometry = new THREE.BoxGeometry(2, 2, 2);
+                let material = new THREE.MeshNormalMaterial();
+                let cube = new THREE.Mesh(geometry, material);
+                cube.position.set(Math.cos(360 / i) * 9, 0, Math.sin(360 / i) * 9);
+                scene.add(cube)
+              }
+              let geometry = new THREE.BoxGeometry(2, 2, 2);
+              let material = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5 });
+              let cube = new THREE.Mesh(geometry, material);
+              scene.add(cube)
+              geometry = new THREE.BoxGeometry(.5, .5, .5);
+              material = new THREE.MeshNormalMaterial();
+              cube = new THREE.Mesh(geometry, material);
+              scene.add(cube)
+              geometry = new THREE.BoxGeometry(200, .1, 200);
+              material = new THREE.MeshDepthMaterial({ color: 0xaaaaaa });
+              cube = new THREE.Mesh(geometry, material);
+              cube.position.set(cube.position.x, cube.position.y - 1, cube.position.z);
+              scene.add(cube)
+            break;
+            case '4':
+              let material = new THREE.MeshNormalMaterial();
+              for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                  let wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), material);
+                  wave.position.set(wave.position.x - i * 30, wave.position.y - j * 30, wave.position.z);
+                  waves.add(wave);
+                }
+              }
+              scene.add(waves);
+            break;
+            default:
+            break;
           }
-        }
+        })
       })
-    })
   </script>
 </body>
 
