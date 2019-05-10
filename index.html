@@ -36,7 +36,8 @@
       cursor: pointer;
       margin: 40px;
       padding: 0 30px;
-      width: 600px;
+      width: 17vw;
+      min-width: 400px;
     }
 
     h2 {
@@ -117,7 +118,7 @@
   </div>
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
-  <script>
+  <script>  
     let aphorism = '1';
     let renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -145,8 +146,10 @@
     let time = 0;
     const lifeCubes = new THREE.Group();
     const waves = new THREE.Group();
+    const ROTATION_SPEED = .01;
     let pinkPlanetGroup;
     let greenPlanetGroup;
+    let innerCube;
 
     function CustomSinCurve(scale, type) {
 
@@ -181,7 +184,7 @@
       for (let j = 0; j < count; j++) {
         const lifeCubes = new THREE.Group();
           for (let i = 0; i < 7; i++) {
-            let geometry = new THREE.BoxGeometry(1, 1, 1);
+            let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
             let material = new THREE.MeshNormalMaterial();
             let cube = new THREE.Mesh(geometry, material);
             cube.position.set(i * 2, i * i / 4, 0);
@@ -194,12 +197,18 @@
 
     const generateStars = (count) => {
       for (let i = 0; i < count; i++) {
-        let geometry = new THREE.BoxGeometry(.1, .1, .1);
+        let geometry = new THREE.BoxBufferGeometry(.1, .1, .1);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         let cube = new THREE.Mesh(geometry, material);
         cube.position.set(random(-100, 100), random(-100, 100), random(-100, 100));
         scene.add(cube);
       }
+    }
+
+    const rotateInnerCube = () => {
+      innerCube.rotation.x -= ROTATION_SPEED * 3;
+      innerCube.rotation.y -= ROTATION_SPEED;
+      innerCube.rotation.z -= ROTATION_SPEED;
     }
 
     const generatePlanetary = () => {
@@ -233,6 +242,7 @@
       } else if (aphorism === '2') {
       } else if (aphorism === '3') {
         lifeCubes.position.set(lifeCubes.position.x - .05, lifeCubes.position.y - .05, lifeCubes.position.z)
+        rotateInnerCube();
       } else if (aphorism === '4') {
         waves.children.forEach((wave, index) => {
           if (index === 4) {
@@ -257,8 +267,8 @@
     animate();
 
     onDocumentMouseMove = (event) => {
-        mouseX = (event.clientX - windowHalfX) / 10;
-        mouseY = (event.clientY - windowHalfY) / 10;
+        mouseX = (event.clientX - windowHalfX) / 25;
+        mouseY = (event.clientY - windowHalfY) / 25;
       }
 
     onWindowResize = () => {
@@ -281,6 +291,8 @@
           if (e.target.tagName === 'H3') selectedContainer = e.target.parentNode
           aphorism = selectedContainer.id;
           scene = new THREE.Scene();
+          document.addEventListener('mousemove', onDocumentMouseMove, true);
+          camera.position.set(0, 0, 100)
           switch (aphorism) {
             case '1':
               generatePlanetary();
@@ -292,7 +304,7 @@
               const lifeCubes = new THREE.Group();
               generateLifeCubes(500);
               for (let i = 0; i < 7; i++) {
-                let geometry = new THREE.BoxGeometry(1, 1, 1);
+                let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
                 let material = new THREE.MeshNormalMaterial();
                 let cube = new THREE.Mesh(geometry, material);
                 cube.position.set(i * 2, i * i / 4, 0);
@@ -307,16 +319,16 @@
                 
                 switch (Math.round(random(0, 3))) {
                   case 0:
-                    geometry = new THREE.BoxGeometry(2, Math.round(random(1, 5)), 2);
+                    geometry = new THREE.BoxBufferGeometry(2, Math.round(random(1, 5)), 2);
                   break;
                   case 1:
-                    geometry = new THREE.DodecahedronBufferGeometry(Math.round(random(1, 5)), 0);
+                    geometry = new THREE.DodecahedronBufferGeometry(Math.round(random(1, 3)), 0);
                   break;
                   case 2:
                     geometry = new THREE.CylinderGeometry(1, Math.round(random(0, 2)), 2, 32);
                   break;
                   case 3:
-                    geometry = new THREE.TorusKnotBufferGeometry(2, .4, 100, 16);;
+                    geometry = new THREE.TorusKnotBufferGeometry(1, .2, 100, 16);;
                   break;
                   default:
                   break;
@@ -326,30 +338,43 @@
                 cube.position.set(random(.5, 10) * Math.cos(360 / i) * 9, random(.5, 10) * Math.round(random(-10, 10)), random(.5, 10) * Math.sin(360 / i) * 9);
                 scene.add(cube)
               }
-              let geometry = new THREE.BoxGeometry(2, 2, 2);
+              let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
               material = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5 });
               let cube = new THREE.Mesh(geometry, material);
               scene.add(cube)
-              geometry = new THREE.BoxGeometry(.5, .5, .5);
+              geometry = new THREE.BoxBufferGeometry(.5, .5, .5);
               material = new THREE.MeshNormalMaterial();
-              cube = new THREE.Mesh(geometry, material);
-              scene.add(cube)
+              innerCube = new THREE.Mesh(geometry, material);
+              scene.add(innerCube)
             break;
             case '4':
-              material = new THREE.MeshNormalMaterial();
+              let waveMaterial = new THREE.MeshNormalMaterial();
               for (let i = -1; i < 2; i++) {
                 for (let j = -1; j < 2; j++) {
                   let wave;
                   if (i === j && i === 0 && j  === 0) {
-                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'second'), 100, .7, 40, false), material);
+                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'second'), 100, .7, 40, false), waveMaterial);
                   } else {
-                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), material);
+                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), waveMaterial);
                   }
                   wave.position.set(wave.position.x - i * 30, wave.position.y - j * 30, wave.position.z);
                   waves.add(wave);
                 }
               }
               scene.add(waves);
+            break;
+            case '5':
+              scene = new THREE.Scene();
+              document.removeEventListener('mousemove', onDocumentMouseMove, true);
+              let coneGeometry = new THREE.ConeBufferGeometry(1, 2, 64)
+              let material = new THREE.MeshNormalMaterial();
+              for (let i = 0; i < 6; i++) {
+                let cone = new THREE.Mesh(coneGeometry, material);
+                cone.rotation.z = i;
+                cone.position.x = Math.cos(Math.PI * 360 / i) * -3;
+                cone.position.y = Math.sin(Math.PI * 360 / i) * -3;
+                scene.add(cone);
+              }
             break;
             default:
             break;
