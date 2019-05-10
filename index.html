@@ -43,19 +43,19 @@
     <h3>Aphorisms</h3>
     <ul>
       <li id="1">この世は私が私になるところあなたがあなたになるところ</li>
-      <li id="2">命いっぱい</li>
-      <li id="3">人のことじゃないんだよじぶんのことだよ</li>
+      <li id="2">いのちいっぱい</li>
+      <li id="3">ひとのことじゃないんだよじぶんのことだよ</li>
       <li id="4">あなたのこころがきれいだからなんでもきれいに見えるんだなあ</li>
       <li id="5">経験してはじめて身につくんだなあ</li>
       <li id="6">あなたの声を電話で聞いただけでその日一日心がなごむ理屈じゃねんだよなあ</li>
-      <li id="7"">どうでもいいものはどうでもいいんだよ一番大事なことに一番大事ないのちをかけてゆくことだ</li>
+      <li id="7"">どうでもいいものはどうでもいいんだよいちばん大事なことに一番大事ないのちをかけてゆくことだ</li>
       <li id="8">なんにも欲しがらぬとさが一番強い</li>
       <li id="9">あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</li>
-      <li id="10">あたまじゃれかっているんだが</li>
+      <li id="10">そのままでいいがな</li>
       <li id="11">人間人間人間第一</li>
-      <li id="12">本当のことがいちばんいい</li>
-      <li id="13">しあれせはいつも自分のこころが決める</li>
-      <li id="14">今が大事</li>
+      <li id="12">ほんとうのことがいちばんいい</li>
+      <li id="13">しあれせはいつもじぶんのこころがきめる</li>
+      <li id="14">いまが大事</li>
       <li id="15">その時自分ならばどうする</li>
 
     </ul>
@@ -75,6 +75,41 @@
     let scene = new THREE.Scene();
     let time = 0;
     const lifeCubes = new THREE.Group();
+    const waves = new THREE.Group();
+    // let wave = null;
+    // let secondWave = null;
+    // let thirdWave = null;
+    // let path = null;
+    // let waveGeometry = null;
+
+    function CustomSinCurve(scale, type) {
+
+        THREE.Curve.call(this);
+
+        this.scale = (scale === undefined) ? 1 : scale;
+        this.type = type;
+      }
+
+      CustomSinCurve.prototype = Object.create(THREE.Curve.prototype);
+      CustomSinCurve.prototype.constructor = CustomSinCurve;
+
+      CustomSinCurve.prototype.getPoint = function (t) {
+
+        // var tx = t * 3 - 1.5;
+        // var ty = Math.sin(2 * Math.PI * t);
+        // var tz = 0;
+        var tx = 1 * t * 3 - 1.5;
+        var ty = 0;
+        if (this.type === 'first') {
+          ty = Math.cos(Math.sin(time / 5) * Math.PI * t) * Math.sin(Math.cos(time / 5) * Math.PI * t);
+        } else if (this.type === 'second') {
+          ty = Math.cos(Math.cos(time) * Math.PI * t) * Math.sin(Math.sin(time) * Math.PI * t);
+        }
+        var tz = 1;
+
+        return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+      };
 
     let random = (min, max) => {
       return Math.random() * (+max - +min) + +min; 
@@ -89,7 +124,7 @@
             let cube = new THREE.Mesh(geometry, material);
             cube.position.set(i * 2, i * i / 4, 0);
             lifeCubes.add(cube);
-            lifeCubes.position.set(random(-70, 70), random(-70, 70), random(-70, 70))
+            lifeCubes.position.set(random(-90, 90), random(-90, 90), random(-90, 90))
           }
           scene.add(lifeCubes)
         }
@@ -105,27 +140,39 @@
       }
     }
 
+    // Generate Planetary
     scene = new THREE.Scene();
-    const planetGroup = new THREE.Group();
-    scene.background = new THREE.Color(0x000000)
-    let geometry = new THREE.SphereGeometry(5, 20, 20);
-    let material = new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 });
-    let cube = new THREE.Mesh(geometry, material);
-    planetGroup.add(cube);
-    geometry = new THREE.SphereGeometry(2, 20, 20);
-    material = new THREE.MeshNormalMaterial({ side: THREE.BackSide });
-    cube = new THREE.Mesh(geometry, material);
-    planetGroup.add(cube);
-    scene.add(planetGroup)
+    scene.background = new THREE.Color(0x000000);
+    const pinkPlanetGroup = new THREE.Group();
+    const greenPlanetGroup = new THREE.Group();
+    let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
+    pinkPlanetGroup.add(sphere);
+    sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+    pinkPlanetGroup.add(sphere);
+    sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 }));
+    greenPlanetGroup.add(sphere);
+    sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+    greenPlanetGroup.add(sphere);
+    scene.add(pinkPlanetGroup)
+    scene.add(greenPlanetGroup)
     generateStars(1500);
+
+    
    
     let renderAphorism = (aphorism) => {
       
       if (aphorism === '1') {
-        planetGroup.position.set(Math.cos(time) * 10, Math.sin(time) * 10, 0);
+        pinkPlanetGroup.position.set(Math.cos(time) * 10, Math.sin(time) * 10, 0);
+        greenPlanetGroup.position.set(Math.sin(time) * 20, Math.cos(time) * 20, Math.sin(time) * 20);
+        
       } else if (aphorism === '2') {
+      } else if (aphorism === '3') {
         scene.background = new THREE.Color(0xed7737)
         lifeCubes.position.set(lifeCubes.position.x - .05, lifeCubes.position.y - .05, lifeCubes.position.z)
+      } else if (aphorism === '4') {
+        waves.children.forEach((wave) => {
+          wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false);
+        })
       }
     }
     
@@ -145,21 +192,27 @@
           currentAphorism = listItem.id;
           scene = new THREE.Scene();
           if (currentAphorism === '1') {
-            const planetGroup = new THREE.Group();
-            scene.background = new THREE.Color(0x000000)
-            let geometry = new THREE.SphereGeometry(5, 20, 20);
-            let material = new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 });
-            let cube = new THREE.Mesh(geometry, material);
-            planetGroup.add(cube);
-            geometry = new THREE.SphereGeometry(2, 20, 20);
-            material = new THREE.MeshNormalMaterial({ side: THREE.BackSide });
-            cube = new THREE.Mesh(geometry, material);
-            planetGroup.add(cube);
-            scene.add(planetGroup)
+            console.log('fds')
+            scene.background = new THREE.Color(0x000000);
+            const pinkPlanetGroup = new THREE.Group();
+            const greenPlanetGroup = new THREE.Group();
+            let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
+            pinkPlanetGroup.add(sphere);
+            sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+            pinkPlanetGroup.add(sphere);
+            sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00aff, transparent: true, opacity: 0.5 }));
+            greenPlanetGroup.add(sphere);
+            sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+            greenPlanetGroup.add(sphere);
+            scene.add(pinkPlanetGroup)
+            scene.add(greenPlanetGroup)
             generateStars(1500);
+
+
+            
           } else if (currentAphorism === '2') {
             const lifeCubes = new THREE.Group();
-            generateLifeCubes(300);
+            generateLifeCubes(600);
             for (let i = 0; i < 7; i++) {
               let geometry = new THREE.BoxGeometry(1, 1, 1);
               let material = new THREE.MeshNormalMaterial();
@@ -190,9 +243,17 @@
             cube.position.set(cube.position.x, cube.position.y - 1, cube.position.z);
             scene.add(cube)
           } else if (currentAphorism === '4') {
-          
+            var material = new THREE.MeshNormalMaterial();
+            for (let i = -2; i < 2; i++) {
+              for (let j = -2; j < 2; j++) {
+                let wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), material);
+                wave.position.set(wave.position.x - i * 30, wave.position.y - j * 30, wave.position.z);
+                waves.add(wave);
+              }
+            }
+            scene.add(waves);
           } else if (currentAphorism === '5') {
-            
+
           }
         }
       })
@@ -200,4 +261,4 @@
   </script>
 </body>
 
-</html
+</html>
