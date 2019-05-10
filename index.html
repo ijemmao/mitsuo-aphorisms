@@ -102,8 +102,8 @@
       <h2>Happiness</h2>
       <h3>しあれせはいつもじぶんのこころがきめる</h3>
       <h4>Happiness is always determined by your heart</h4>
-      <h3>そのままでいいがな</h3>
-      <h4>It’s good as is</h4>
+      <h3>一番わかっているようで一番わからぬこの自分</h3>
+      <h4>Even though it seems like I know the most, I know the least about myself</h4>
       <h3>あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</h3>
       <h4>The pain and sadness at that time was the fertilizer that I needed to become who I am today</h4>
     </div>
@@ -128,7 +128,6 @@
     let controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enabled = true;
     controls.enableKeys = true;
-    controls.enableDamping = true;
     controls.keys = {
         LEFT: 65, //left arrow
         UP: 87, // up arrow
@@ -138,6 +137,10 @@
     controls.minDistance = 0;
     controls.maxDistance = 150;
     controls.update();
+    let mouseX = 0;
+    let mouseY = 0;
+    let windowHalfX = window.innerWidth / 2;
+    let windowHalfY = window.innerHeight / 2;
     let scene = new THREE.Scene();
     let time = 0;
     const lifeCubes = new THREE.Group();
@@ -162,7 +165,7 @@
         if (this.type === 'first') {
           ty = Math.cos(Math.sin(time / 5) * Math.PI * t) * Math.sin(Math.cos(time / 5) * Math.PI * t);
         } else if (this.type === 'second') {
-          ty = Math.cos(Math.cos(time) * Math.PI * t) * Math.sin(Math.sin(time) * Math.PI * t);
+          ty = Math.cos(Math.cos(time / 5) * Math.PI * t) * Math.sin(Math.sin(time / 5) * Math.PI * t);
         }
         let tz = 1;
 
@@ -183,7 +186,7 @@
             let cube = new THREE.Mesh(geometry, material);
             cube.position.set(i * 2, i * i / 4, 0);
             lifeCubes.add(cube);
-            lifeCubes.position.set(random(-110, 110), random(-110, 110), random(-110, 110))
+            lifeCubes.position.set(random(-200, 200), random(-200, 200), random(-200, 200))
           }
           scene.add(lifeCubes)
         }
@@ -231,27 +234,46 @@
       } else if (aphorism === '3') {
         lifeCubes.position.set(lifeCubes.position.x - .05, lifeCubes.position.y - .05, lifeCubes.position.z)
       } else if (aphorism === '4') {
-        console.log(aphorism)
-        waves.children.forEach((wave) => {
-          wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false);
+        waves.children.forEach((wave, index) => {
+          if (index === 4) {
+            wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'second'), 100, .7, 40, false);
+          } else {
+            wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false);
+          }
         })
       }
     }
     
     let animate = () => {
       time += .07;
+
+      camera.position.x += (mouseX - camera.position.x) * .05;
+      camera.position.y += (- mouseY - camera.position.y) * .05;
+
       requestAnimationFrame(animate);
       renderAphorism(aphorism);
       renderer.render(scene, camera);
     }
     animate();
 
+    onDocumentMouseMove = (event) => {
+        mouseX = (event.clientX - windowHalfX) / 10;
+        mouseY = (event.clientY - windowHalfY) / 10;
+      }
+
     onWindowResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       }
-      window.addEventListener('resize', onWindowResize, false);
+    window.addEventListener('resize', onWindowResize, false);
+    document.addEventListener('mousemove', onDocumentMouseMove, true);
+    document.addEventListener('mousedown', () => {
+      document.removeEventListener('mousemove', onDocumentMouseMove, true);
+    }, false);
+    document.addEventListener('mouseup', () => {
+      document.addEventListener('mousemove', onDocumentMouseMove, true);
+    }, false);
 
     Array.from(document.getElementsByClassName('aphorism-container')).forEach((element) => {
       element.addEventListener('click', (e) => {
@@ -268,7 +290,7 @@
               scene.fog = new THREE.Fog(0x000000, 0.2, 3);
               console.log(scene.fog)
               const lifeCubes = new THREE.Group();
-              generateLifeCubes(1000);
+              generateLifeCubes(500);
               for (let i = 0; i < 7; i++) {
                 let geometry = new THREE.BoxGeometry(1, 1, 1);
                 let material = new THREE.MeshNormalMaterial();
@@ -302,7 +324,6 @@
                 let material = new THREE.MeshNormalMaterial();
                 let cube = new THREE.Mesh(geometry, material);
                 cube.position.set(random(.5, 10) * Math.cos(360 / i) * 9, random(.5, 10) * Math.round(random(-10, 10)), random(.5, 10) * Math.sin(360 / i) * 9);
-
                 scene.add(cube)
               }
               let geometry = new THREE.BoxGeometry(2, 2, 2);
@@ -318,7 +339,12 @@
               material = new THREE.MeshNormalMaterial();
               for (let i = -1; i < 2; i++) {
                 for (let j = -1; j < 2; j++) {
-                  let wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), material);
+                  let wave;
+                  if (i === j && i === 0 && j  === 0) {
+                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'second'), 100, .7, 40, false), material);
+                  } else {
+                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), material);
+                  }
                   wave.position.set(wave.position.x - i * 30, wave.position.y - j * 30, wave.position.z);
                   waves.add(wave);
                 }
