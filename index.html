@@ -60,7 +60,7 @@
     }
 
     h3:hover {
-      color: #ffb085;
+      color: #3c5929;
       color: rgb(101, 201, 255);
     }
   </style>
@@ -118,7 +118,7 @@
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script>
-    let currentAphorism = '1';
+    let aphorism = '1';
     let renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -212,16 +212,15 @@
     
    
     let renderAphorism = (aphorism) => {
-      
       if (aphorism === '1') {
         pinkPlanetGroup.position.set(Math.cos(time) * 10, Math.sin(time) * 10, 0);
         greenPlanetGroup.position.set(Math.sin(time) * 20, Math.cos(time) * 20, Math.sin(time) * 20);
         
       } else if (aphorism === '2') {
       } else if (aphorism === '3') {
-        scene.background = new THREE.Color(0xed7737)
         lifeCubes.position.set(lifeCubes.position.x - .05, lifeCubes.position.y - .05, lifeCubes.position.z)
       } else if (aphorism === '4') {
+        console.log(aphorism)
         waves.children.forEach((wave) => {
           wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false);
         })
@@ -231,7 +230,7 @@
     let animate = () => {
       time += .07;
       requestAnimationFrame(animate);
-      renderAphorism(currentAphorism);
+      renderAphorism(aphorism);
       renderer.render(scene, camera);
     }
     animate();
@@ -247,9 +246,9 @@
       element.addEventListener('click', (e) => {
           let selectedContainer = e.target;
           if (e.target.tagName === 'H3') selectedContainer = e.target.parentNode
-          let currentAphorism = selectedContainer.id;
+          aphorism = selectedContainer.id;
           scene = new THREE.Scene();
-          switch (currentAphorism) {
+          switch (aphorism) {
             case '1':
               generatePlanetary();
             break;
@@ -267,11 +266,30 @@
               scene.add(lifeCubes);
             break;
             case '3':
-              for (let i = 0; i < 20; i++) {
-                let geometry = new THREE.BoxGeometry(2, 2, 2);
+              scene.background = new THREE.Color(0x3c5929)
+              for (let i = 0; i < 300; i++) {
+                let geometry;
+                
+                switch (Math.round(random(0, 3))) {
+                  case 0:
+                    geometry = new THREE.BoxGeometry(2, Math.round(random(1, 5)), 2);
+                  break;
+                  case 1:
+                    geometry = new THREE.DodecahedronBufferGeometry(Math.round(random(1, 5)), 0);
+                  break;
+                  case 2:
+                    geometry = new THREE.CylinderGeometry(1, Math.round(random(0, 2)), 2, 32);
+                  break;
+                  case 3:
+                    geometry = new THREE.TorusKnotBufferGeometry(2, .4, 100, 16);;
+                  break;
+                  default:
+                  break;
+                }
                 let material = new THREE.MeshNormalMaterial();
                 let cube = new THREE.Mesh(geometry, material);
-                cube.position.set(Math.cos(360 / i) * 9, 0, Math.sin(360 / i) * 9);
+                cube.position.set(random(.5, 10) * Math.cos(360 / i) * 9, random(.5, 10) * Math.round(random(-10, 10)), random(.5, 10) * Math.sin(360 / i) * 9);
+
                 scene.add(cube)
               }
               let geometry = new THREE.BoxGeometry(2, 2, 2);
@@ -281,11 +299,6 @@
               geometry = new THREE.BoxGeometry(.5, .5, .5);
               material = new THREE.MeshNormalMaterial();
               cube = new THREE.Mesh(geometry, material);
-              scene.add(cube)
-              geometry = new THREE.BoxGeometry(200, .1, 200);
-              material = new THREE.MeshDepthMaterial({ color: 0xaaaaaa });
-              cube = new THREE.Mesh(geometry, material);
-              cube.position.set(cube.position.x, cube.position.y - 1, cube.position.z);
               scene.add(cube)
             break;
             case '4':
