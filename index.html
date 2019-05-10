@@ -79,15 +79,6 @@
       <h4>Honesty is the best policy</h4>
     </div>
     <div class="aphorism-container" id="2">
-      <h2>Happiness</h2>
-      <h3>しあれせはいつもじぶんのこころがきめる</h3>
-      <h4>Happiness is always determined by your heart</h4>
-      <h3>そのままでいいがな</h3>
-      <h4>It’s good as is</h4>
-      <h3>あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</h3>
-      <h4>The pain and sadness at that time was the fertilizer that I needed to become who I am today</h4>
-    </div>
-    <div class="aphorism-container" id="3">
       <h2>Carpe Diem</h2>
       <h3>いまが大事</h3>
       <h4>Live in the now</h4>
@@ -100,12 +91,21 @@
       <h3>その時自分ならばどうする</h3>
       <h4>What would I have done then?</h4>
     </div>
-    <div class="aphorism-container" id="4">
+    <div class="aphorism-container" id="3">
       <h2>Humans</h2>
       <h3>人間人間人間第一</h3>
       <h4>Humanity is formidable</h4>
       <h3>ひとのことじゃないんだよじぶんのことだよ</h3>
       <h4>It's not people's issue, it's your issue</h4>
+    </div>
+    <div class="aphorism-container" id="4">
+      <h2>Happiness</h2>
+      <h3>しあれせはいつもじぶんのこころがきめる</h3>
+      <h4>Happiness is always determined by your heart</h4>
+      <h3>そのままでいいがな</h3>
+      <h4>It’s good as is</h4>
+      <h3>あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</h3>
+      <h4>The pain and sadness at that time was the fertilizer that I needed to become who I am today</h4>
     </div>
     <div class="aphorism-container" id="5">
       <h2>Loving Others</h2>
@@ -126,6 +126,17 @@
     camera.position.set(0, 0, 100);
     camera.lookAt(0, 0, 0);
     let controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enabled = true;
+    controls.enableKeys = true;
+    controls.enableDamping = true;
+    controls.keys = {
+        LEFT: 65, //left arrow
+        UP: 87, // up arrow
+        RIGHT: 68, // right arrow
+        BOTTOM: 83 // down arrow
+      }
+    controls.minDistance = 0;
+    controls.maxDistance = 150;
     controls.update();
     let scene = new THREE.Scene();
     let time = 0;
@@ -172,7 +183,7 @@
             let cube = new THREE.Mesh(geometry, material);
             cube.position.set(i * 2, i * i / 4, 0);
             lifeCubes.add(cube);
-            lifeCubes.position.set(random(-90, 90), random(-90, 90), random(-90, 90))
+            lifeCubes.position.set(random(-110, 110), random(-110, 110), random(-110, 110))
           }
           scene.add(lifeCubes)
         }
@@ -254,8 +265,10 @@
             break;
             case '2':
               scene.background = new THREE.Color(0xffb085);
+              scene.fog = new THREE.Fog(0x000000, 0.2, 3);
+              console.log(scene.fog)
               const lifeCubes = new THREE.Group();
-              generateLifeCubes(600);
+              generateLifeCubes(1000);
               for (let i = 0; i < 7; i++) {
                 let geometry = new THREE.BoxGeometry(1, 1, 1);
                 let material = new THREE.MeshNormalMaterial();
@@ -266,7 +279,7 @@
               scene.add(lifeCubes);
             break;
             case '3':
-              scene.background = new THREE.Color(0x3c5929)
+              scene.background = new THREE.Color(0x3c5929);
               for (let i = 0; i < 300; i++) {
                 let geometry;
                 
