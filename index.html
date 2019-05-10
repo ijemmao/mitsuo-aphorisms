@@ -10,6 +10,7 @@
       background-color: #ffffff;
       font-family: 'Avenir';
       user-select: none;
+      overflow: hidden;
     }
 
     canvas {
@@ -23,20 +24,43 @@
 
     .aphorisms-container {
       position: absolute;
+      overflow-y: scroll;
+      height: 100%;
       color: white;
     }
 
     .aphorism-container {
       border: 1px solid white;
+      background-color: black;
       border-radius: 5px;
       cursor: pointer;
-      margin: 20px;
+      margin: 40px;
       padding: 0 30px;
       width: 600px;
     }
 
+    h2 {
+      position: relative;
+      top: -20px;
+      background-color: black;
+      width: fit-content;
+      padding: 0 5px;
+      border: 1px solid white;
+      border-radius: 5px;
+      margin: 0;
+    }
+
+    h3 {
+      margin-bottom: 0;
+      color: rgb(156, 216, 249);
+    }
+
+    h4 {
+      margin-top: 5px;
+    }
+
     h3:hover {
-      color: #ed7737;
+      color: #ffb085;
       color: rgb(101, 201, 255);
     }
   </style>
@@ -44,31 +68,51 @@
 
 <body>
   <div class="aphorisms-container">
-    <h1>Aphorisms</h1>
+      <h1>Aphorisms</h1>
     <div class="aphorism-container" id="1">
+      <h2>Virtue</h2>
       <h3>この世は私が私になるところあなたがあなたになるところ</h3>
+      <h4>This world has made me and you who we are today</h4>
       <h3>なんにも欲しがらぬとさが一番強い</h3>
+      <h4>The desire for nothing is the strongest</h4>
       <h3>ほんとうのことがいちばんいい</h3>
+      <h4>Honesty is the best policy</h4>
     </div>
     <div class="aphorism-container" id="2">
+      <h2>Happiness</h2>
       <h3>しあれせはいつもじぶんのこころがきめる</h3>
+      <h4>Happiness is always determined by your heart</h4>
       <h3>そのままでいいがな</h3>
+      <h4>It’s good as is</h4>
       <h3>あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</h3>
+      <h4>The pain and sadness at that time was the fertilizer that I needed to become who I am today</h4>
     </div>
     <div class="aphorism-container" id="3">
+      <h2>Carpe Diem</h2>
       <h3>いまが大事</h3>
+      <h4>Live in the now</h4>
       <h3>いのちいっぱい</h3>
+      <h4>Life is vast</h4>
       <h3>経験してはじめて身につくんだなあ</h3>
+      <h4>You truly learn from experience</h4>
       <h3>どうでもいいものはどうでもいいんだよいちばん大事なことに一番大事ないのちをかけてゆくことだ</h3>
+      <h4>It doesn't matter what you do, the most important thing is to live the best life you can</h4>
       <h3>その時自分ならばどうする</h3>
+      <h4>What would I have done then?</h4>
     </div>
     <div class="aphorism-container" id="4">
+      <h2>Humans</h2>
       <h3>人間人間人間第一</h3>
+      <h4>Humanity is formidable</h4>
       <h3>ひとのことじゃないんだよじぶんのことだよ</h3>
+      <h4>It's not people's issue, it's your issue</h4>
     </div>
     <div class="aphorism-container" id="5">
+      <h2>Loving Others</h2>
       <h3>あなたのこころがきれいだからなんでもきれいに見えるんだなあ</h3>
+      <h4>You're so beautiful because your heart is kind</h4>
       <h3>あなたの声を電話で聞いただけでその日一日心がなごむ理屈じゃねんだよなあ</h3>
+      <h4>Hearing your voice the other day is the reason why I'm so relaxed</h4>
     </div>
   </div>
   <script src="js/three.js"></script>
@@ -87,6 +131,8 @@
     let time = 0;
     const lifeCubes = new THREE.Group();
     const waves = new THREE.Group();
+    let pinkPlanetGroup;
+    let greenPlanetGroup;
 
     function CustomSinCurve(scale, type) {
 
@@ -113,11 +159,11 @@
 
       };
 
-    let random = (min, max) => {
+    const random = (min, max) => {
       return Math.random() * (+max - +min) + +min; 
     }
 
-    let generateLifeCubes = (count) => {
+    const generateLifeCubes = (count) => {
       for (let j = 0; j < count; j++) {
         const lifeCubes = new THREE.Group();
           for (let i = 0; i < 7; i++) {
@@ -132,7 +178,7 @@
         }
     }
 
-    let generateStars = (count) => {
+    const generateStars = (count) => {
       for (let i = 0; i < count; i++) {
         let geometry = new THREE.BoxGeometry(.1, .1, .1);
         let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -142,22 +188,26 @@
       }
     }
 
+    const generatePlanetary = () => {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+      pinkPlanetGroup = new THREE.Group();
+      greenPlanetGroup = new THREE.Group();
+      let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
+      pinkPlanetGroup.add(sphere);
+      sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+      pinkPlanetGroup.add(sphere);
+      sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 }));
+      greenPlanetGroup.add(sphere);
+      sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
+      greenPlanetGroup.add(sphere);
+      scene.add(pinkPlanetGroup)
+      scene.add(greenPlanetGroup)
+      generateStars(1500);
+    }
+
     // Generate Planetary
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000);
-    const pinkPlanetGroup = new THREE.Group();
-    const greenPlanetGroup = new THREE.Group();
-    let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
-    pinkPlanetGroup.add(sphere);
-    sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-    pinkPlanetGroup.add(sphere);
-    sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 }));
-    greenPlanetGroup.add(sphere);
-    sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-    greenPlanetGroup.add(sphere);
-    scene.add(pinkPlanetGroup)
-    scene.add(greenPlanetGroup)
-    generateStars(1500);
+    generatePlanetary();
 
     
    
@@ -186,7 +236,13 @@
     }
     animate();
 
-    
+    onWindowResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      window.addEventListener('resize', onWindowResize, false);
+
     Array.from(document.getElementsByClassName('aphorism-container')).forEach((element) => {
       element.addEventListener('click', (e) => {
           let selectedContainer = e.target;
@@ -195,22 +251,10 @@
           scene = new THREE.Scene();
           switch (currentAphorism) {
             case '1':
-              scene.background = new THREE.Color(0x000000);
-              const pinkPlanetGroup = new THREE.Group();
-              const greenPlanetGroup = new THREE.Group();
-              let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
-              pinkPlanetGroup.add(sphere);
-              sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-              pinkPlanetGroup.add(sphere);
-              sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00aff, transparent: true, opacity: 0.5 }));
-              greenPlanetGroup.add(sphere);
-              sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-              greenPlanetGroup.add(sphere);
-              scene.add(pinkPlanetGroup)
-              scene.add(greenPlanetGroup)
-              generateStars(1500);
+              generatePlanetary();
             break;
             case '2':
+              scene.background = new THREE.Color(0xffb085);
               const lifeCubes = new THREE.Group();
               generateLifeCubes(600);
               for (let i = 0; i < 7; i++) {
@@ -231,7 +275,7 @@
                 scene.add(cube)
               }
               let geometry = new THREE.BoxGeometry(2, 2, 2);
-              let material = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5 });
+              material = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5 });
               let cube = new THREE.Mesh(geometry, material);
               scene.add(cube)
               geometry = new THREE.BoxGeometry(.5, .5, .5);
@@ -245,7 +289,7 @@
               scene.add(cube)
             break;
             case '4':
-              let material = new THREE.MeshNormalMaterial();
+              material = new THREE.MeshNormalMaterial();
               for (let i = -1; i < 2; i++) {
                 for (let j = -1; j < 2; j++) {
                   let wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), material);
