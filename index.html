@@ -93,13 +93,6 @@
       <h4>What would I have done then?</h4>
     </div>
     <div class="aphorism-container" id="3">
-      <h2>Humans</h2>
-      <h3>人間人間人間第一</h3>
-      <h4>Humanity is formidable</h4>
-      <h3>ひとのことじゃないんだよじぶんのことだよ</h3>
-      <h4>It's not people's issue, it's your issue</h4>
-    </div>
-    <div class="aphorism-container" id="4">
       <h2>Happiness</h2>
       <h3>しあれせはいつもじぶんのこころがきめる</h3>
       <h4>Happiness is always determined by your heart</h4>
@@ -108,12 +101,16 @@
       <h3>あのときのあの苦しみもあのときのあの悲しみもみんな肥料になったんだなあじぶんが自分なるための</h3>
       <h4>The pain and sadness at that time was the fertilizer that I needed to become who I am today</h4>
     </div>
-    <div class="aphorism-container" id="5">
+    <div class="aphorism-container" id="4">
       <h2>Loving Others</h2>
       <h3>あなたのこころがきれいだからなんでもきれいに見えるんだなあ</h3>
       <h4>You're so beautiful because your heart is kind</h4>
       <h3>あなたの声を電話で聞いただけでその日一日心がなごむ理屈じゃねんだよなあ</h3>
       <h4>Hearing your voice the other day is the reason why I'm so relaxed</h4>
+      <h3>人間人間人間第一</h3>
+      <h4>Humanity is formidable</h4>
+      <h3>ひとのことじゃないんだよじぶんのことだよ</h3>
+      <h4>It's not people's issue, it's your issue</h4>
     </div>
   </div>
   <script src="js/three.js"></script>
@@ -262,10 +259,6 @@
 
       } else if (aphorism === '2') {
       } else if (aphorism === '3') {
-        lifeCubes.position.set(lifeCubes.position.x - .05, lifeCubes.position.y - .05, lifeCubes.position.z)
-        console.log(innerCube);
-        rotateInnerCube();
-      } else if (aphorism === '4') {
         waves.children.forEach((wave, index) => {
           if (index === 4) {
             wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'second'), 100, .7, 40, false);
@@ -273,7 +266,7 @@
             wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false);
           }
         })
-      } else if (aphorism === '5') {
+      } else if (aphorism === '4') {
         document.removeEventListener('mousemove', onDocumentMouseMove, true);
         conesGroup.children.forEach((coneGroup) => {
           coneGroup.position.z = Math.cos(Math.sin(time / 5) * Math.PI * random(0, 1))
@@ -331,41 +324,6 @@
             generateLifeCubes(4000);
             break;
           case '3':
-            scene.background = new THREE.Color(0x3c5929);
-            for (let i = 0; i < 300; i++) {
-              let geometry;
-
-              switch (Math.round(random(0, 3))) {
-                case 0:
-                  geometry = new THREE.BoxBufferGeometry(2, Math.round(random(1, 5)), 2);
-                  break;
-                case 1:
-                  geometry = new THREE.DodecahedronBufferGeometry(Math.round(random(1, 3)), 0);
-                  break;
-                case 2:
-                  geometry = new THREE.CylinderGeometry(1, Math.round(random(0, 2)), 2, 32);
-                  break;
-                case 3:
-                  geometry = new THREE.TorusKnotBufferGeometry(1, .2, 100, 16);;
-                  break;
-                default:
-                  break;
-              }
-              let material = new THREE.MeshNormalMaterial();
-              let cube = new THREE.Mesh(geometry, material);
-              cube.position.set(random(.5, 10) * Math.cos(360 / i) * 9, random(.5, 10) * Math.round(random(-10, 10)), random(.5, 10) * Math.sin(360 / i) * 9);
-              scene.add(cube)
-            }
-            let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
-            let yellowMaterial = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5 });
-            let cube = new THREE.Mesh(geometry, yellowMaterial);
-            scene.add(cube)
-            let innerCubeGeometry = new THREE.BoxBufferGeometry(.5, .5, .5);
-            let innerCubeMaterial = new THREE.MeshNormalMaterial();
-            innerCube = new THREE.Mesh(innerCubeGeometry, innerCubeMaterial);
-            scene.add(innerCube)
-            break;
-          case '4':
             waves = new THREE.Group();
             let waveMaterial = new THREE.MeshNormalMaterial();
             for (let i = -1; i < 2; i++) {
@@ -382,7 +340,7 @@
             }
             scene.add(waves);
             break;
-          case '5':
+          case '4':
             scene.background = new THREE.Color(0x260516);
             conesGroup = new THREE.Group(3, 64, 64);
             document.removeEventListener('mousemove', onDocumentMouseMove, true);
