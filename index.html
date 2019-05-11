@@ -61,7 +61,7 @@
     }
 
     h3:hover {
-      color: #3c5929;
+      color: #260516;
       color: rgb(101, 201, 255);
     }
   </style>
@@ -69,7 +69,7 @@
 
 <body>
   <div class="aphorisms-container">
-      <h1>Aphorisms</h1>
+    <h1>Aphorisms</h1>
     <div class="aphorism-container" id="1">
       <h2>Virtue</h2>
       <h3>この世は私が私になるところあなたがあなたになるところ</h3>
@@ -118,7 +118,7 @@
   </div>
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
-  <script>  
+  <script>
     let aphorism = '1';
     let renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -130,11 +130,11 @@
     controls.enabled = true;
     controls.enableKeys = true;
     controls.keys = {
-        LEFT: 65, //left arrow
-        UP: 87, // up arrow
-        RIGHT: 68, // right arrow
-        BOTTOM: 83 // down arrow
-      }
+      LEFT: 65, //left arrow
+      UP: 87, // up arrow
+      RIGHT: 68, // right arrow
+      BOTTOM: 83 // down arrow
+    }
     controls.minDistance = 0;
     controls.maxDistance = 150;
     controls.update();
@@ -144,8 +144,9 @@
     let windowHalfY = window.innerHeight / 2;
     let scene = new THREE.Scene();
     let time = 0;
-    const lifeCubes = new THREE.Group();
-    const waves = new THREE.Group();
+    let lifeCubes = new THREE.Group();
+    let waves = new THREE.Group();
+    let conesGroup = new THREE.Group();
     const ROTATION_SPEED = .01;
     let pinkPlanetGroup;
     let greenPlanetGroup;
@@ -153,46 +154,49 @@
 
     function CustomSinCurve(scale, type) {
 
-        THREE.Curve.call(this);
+      THREE.Curve.call(this);
 
-        this.scale = (scale === undefined) ? 1 : scale;
-        this.type = type;
-      }
-
-      CustomSinCurve.prototype = Object.create(THREE.Curve.prototype);
-      CustomSinCurve.prototype.constructor = CustomSinCurve;
-
-      CustomSinCurve.prototype.getPoint = function (t) {
-        let tx = 1 * t * 3 - 1.5;
-        let ty = 0;
-        if (this.type === 'first') {
-          ty = Math.cos(Math.sin(time / 5) * Math.PI * t) * Math.sin(Math.cos(time / 5) * Math.PI * t);
-        } else if (this.type === 'second') {
-          ty = Math.cos(Math.cos(time / 5) * Math.PI * t) * Math.sin(Math.sin(time / 5) * Math.PI * t);
-        }
-        let tz = 1;
-
-        return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
-
-      };
-
-    const random = (min, max) => {
-      return Math.random() * (+max - +min) + +min; 
+      this.scale = (scale === undefined) ? 1 : scale;
+      this.type = type;
     }
 
+    CustomSinCurve.prototype = Object.create(THREE.Curve.prototype);
+    CustomSinCurve.prototype.constructor = CustomSinCurve;
+
+    CustomSinCurve.prototype.getPoint = function (t) {
+      let tx = 1 * t * 3 - 1.5;
+      let ty = 0;
+      if (this.type === 'first') {
+        ty = Math.cos(Math.sin(time / 5) * Math.PI * t) * Math.sin(Math.cos(time / 5) * Math.PI * t);
+      } else if (this.type === 'second') {
+        ty = Math.cos(Math.cos(time / 5) * Math.PI * t) * Math.sin(Math.sin(time / 5) * Math.PI * t);
+      }
+      let tz = 1;
+
+      return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+    };
+
+    const random = (min, max) => {
+      return Math.random() * (+max - +min) + +min;
+    }
+
+    const lifeCubeGroup = new THREE.Group();
+      for (let i = 0; i < 7; i++) {
+        let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+        let material = new THREE.MeshNormalMaterial();
+        let cube = new THREE.Mesh(geometry, material);
+        cube.position.set(i * 2, i * i / 4, 0);
+        lifeCubeGroup.add(cube);
+        
+      }
+
     const generateLifeCubes = (count) => {
-      for (let j = 0; j < count; j++) {
-        const lifeCubes = new THREE.Group();
-          for (let i = 0; i < 7; i++) {
-            let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-            let material = new THREE.MeshNormalMaterial();
-            let cube = new THREE.Mesh(geometry, material);
-            cube.position.set(i * 2, i * i / 4, 0);
-            lifeCubes.add(cube);
-            lifeCubes.position.set(random(-200, 200), random(-200, 200), random(-200, 200))
-          }
-          scene.add(lifeCubes)
-        }
+      for (let i = 0; i < count; i++) {
+        let cloneLifeCubeGroup = lifeCubeGroup.clone(true);
+        cloneLifeCubeGroup.position.set(random(-200, 200), random(-200, 200), random(-200, 200))
+        scene.add(cloneLifeCubeGroup)
+      }
     }
 
     const generateStars = (count) => {
@@ -229,19 +233,37 @@
       generateStars(1500);
     }
 
+    const generateConesGroup = (count) => {
+      for (let j = 0; j < count; j++) {
+        const subConeGroup = new THREE.Group();
+        for (let i = 0; i < 6; i++) {
+          let coneGeometry = new THREE.ConeBufferGeometry(1, 2, 64)
+          let material = new THREE.MeshNormalMaterial();
+          let cone = new THREE.Mesh(coneGeometry, material);
+          cone.rotation.z = i;
+          cone.position.x = Math.cos(Math.PI * 360 / i) * -3;
+          cone.position.y = Math.sin(Math.PI * 360 / i) * -3;
+          subConeGroup.add(cone);
+        }
+        subConeGroup.position.set(Math.round(random(-100, 100)), Math.round(random(-100, 100)), 0)
+        conesGroup.add(subConeGroup)
+      }
+    }
+
     // Generate Planetary
     generatePlanetary();
 
-    
-   
+
+
     let renderAphorism = (aphorism) => {
       if (aphorism === '1') {
         pinkPlanetGroup.position.set(Math.cos(time) * 10, Math.sin(time) * 10, 0);
         greenPlanetGroup.position.set(Math.sin(time) * 20, Math.cos(time) * 20, Math.sin(time) * 20);
-        
+
       } else if (aphorism === '2') {
       } else if (aphorism === '3') {
         lifeCubes.position.set(lifeCubes.position.x - .05, lifeCubes.position.y - .05, lifeCubes.position.z)
+        console.log(innerCube);
         rotateInnerCube();
       } else if (aphorism === '4') {
         waves.children.forEach((wave, index) => {
@@ -251,9 +273,14 @@
             wave.geometry = new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false);
           }
         })
+      } else if (aphorism === '5') {
+        document.removeEventListener('mousemove', onDocumentMouseMove, true);
+        conesGroup.children.forEach((coneGroup) => {
+          coneGroup.position.z = Math.cos(Math.sin(time / 5) * Math.PI * random(0, 1))
+        })
       }
     }
-    
+
     let animate = () => {
       time += .07;
 
@@ -267,15 +294,15 @@
     animate();
 
     onDocumentMouseMove = (event) => {
-        mouseX = (event.clientX - windowHalfX) / 25;
-        mouseY = (event.clientY - windowHalfY) / 25;
-      }
+      mouseX = (event.clientX - windowHalfX) / 25;
+      mouseY = (event.clientY - windowHalfY) / 25;
+    }
 
     onWindowResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
     window.addEventListener('resize', onWindowResize, false);
     document.addEventListener('mousemove', onDocumentMouseMove, true);
     document.addEventListener('mousedown', () => {
@@ -287,100 +314,90 @@
 
     Array.from(document.getElementsByClassName('aphorism-container')).forEach((element) => {
       element.addEventListener('click', (e) => {
-          let selectedContainer = e.target;
-          if (e.target.tagName === 'H3') selectedContainer = e.target.parentNode
-          aphorism = selectedContainer.id;
-          scene = new THREE.Scene();
-          document.addEventListener('mousemove', onDocumentMouseMove, true);
-          camera.position.set(0, 0, 100)
-          switch (aphorism) {
-            case '1':
-              generatePlanetary();
+        let selectedContainer = e.target;
+        if (e.target.tagName === 'H3') selectedContainer = e.target.parentNode
+        aphorism = selectedContainer.id;
+        scene = new THREE.Scene();
+        document.addEventListener('mousemove', onDocumentMouseMove, true);
+        // camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+        camera.position.set(0, 0, 100);
+        camera.lookAt(0, 0, 0);
+        switch (aphorism) {
+          case '1':
+            generatePlanetary();
             break;
-            case '2':
-              scene.background = new THREE.Color(0xffb085);
-              scene.fog = new THREE.Fog(0x000000, 0.2, 3);
-              console.log(scene.fog)
-              const lifeCubes = new THREE.Group();
-              generateLifeCubes(500);
-              for (let i = 0; i < 7; i++) {
-                let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-                let material = new THREE.MeshNormalMaterial();
-                let cube = new THREE.Mesh(geometry, material);
-                cube.position.set(i * 2, i * i / 4, 0);
-                lifeCubes.add(cube);
+          case '2':
+            scene.background = new THREE.Color(0xffb085);
+            generateLifeCubes(4000);
+            break;
+          case '3':
+            scene.background = new THREE.Color(0x3c5929);
+            for (let i = 0; i < 300; i++) {
+              let geometry;
+
+              switch (Math.round(random(0, 3))) {
+                case 0:
+                  geometry = new THREE.BoxBufferGeometry(2, Math.round(random(1, 5)), 2);
+                  break;
+                case 1:
+                  geometry = new THREE.DodecahedronBufferGeometry(Math.round(random(1, 3)), 0);
+                  break;
+                case 2:
+                  geometry = new THREE.CylinderGeometry(1, Math.round(random(0, 2)), 2, 32);
+                  break;
+                case 3:
+                  geometry = new THREE.TorusKnotBufferGeometry(1, .2, 100, 16);;
+                  break;
+                default:
+                  break;
               }
-              scene.add(lifeCubes);
-            break;
-            case '3':
-              scene.background = new THREE.Color(0x3c5929);
-              for (let i = 0; i < 300; i++) {
-                let geometry;
-                
-                switch (Math.round(random(0, 3))) {
-                  case 0:
-                    geometry = new THREE.BoxBufferGeometry(2, Math.round(random(1, 5)), 2);
-                  break;
-                  case 1:
-                    geometry = new THREE.DodecahedronBufferGeometry(Math.round(random(1, 3)), 0);
-                  break;
-                  case 2:
-                    geometry = new THREE.CylinderGeometry(1, Math.round(random(0, 2)), 2, 32);
-                  break;
-                  case 3:
-                    geometry = new THREE.TorusKnotBufferGeometry(1, .2, 100, 16);;
-                  break;
-                  default:
-                  break;
-                }
-                let material = new THREE.MeshNormalMaterial();
-                let cube = new THREE.Mesh(geometry, material);
-                cube.position.set(random(.5, 10) * Math.cos(360 / i) * 9, random(.5, 10) * Math.round(random(-10, 10)), random(.5, 10) * Math.sin(360 / i) * 9);
-                scene.add(cube)
-              }
-              let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
-              material = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5 });
-              let cube = new THREE.Mesh(geometry, material);
-              scene.add(cube)
-              geometry = new THREE.BoxBufferGeometry(.5, .5, .5);
-              material = new THREE.MeshNormalMaterial();
-              innerCube = new THREE.Mesh(geometry, material);
-              scene.add(innerCube)
-            break;
-            case '4':
-              let waveMaterial = new THREE.MeshNormalMaterial();
-              for (let i = -1; i < 2; i++) {
-                for (let j = -1; j < 2; j++) {
-                  let wave;
-                  if (i === j && i === 0 && j  === 0) {
-                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'second'), 100, .7, 40, false), waveMaterial);
-                  } else {
-                    wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), waveMaterial);
-                  }
-                  wave.position.set(wave.position.x - i * 30, wave.position.y - j * 30, wave.position.z);
-                  waves.add(wave);
-                }
-              }
-              scene.add(waves);
-            break;
-            case '5':
-              scene = new THREE.Scene();
-              document.removeEventListener('mousemove', onDocumentMouseMove, true);
-              let coneGeometry = new THREE.ConeBufferGeometry(1, 2, 64)
               let material = new THREE.MeshNormalMaterial();
-              for (let i = 0; i < 6; i++) {
-                let cone = new THREE.Mesh(coneGeometry, material);
-                cone.rotation.z = i;
-                cone.position.x = Math.cos(Math.PI * 360 / i) * -3;
-                cone.position.y = Math.sin(Math.PI * 360 / i) * -3;
-                scene.add(cone);
+              let cube = new THREE.Mesh(geometry, material);
+              cube.position.set(random(.5, 10) * Math.cos(360 / i) * 9, random(.5, 10) * Math.round(random(-10, 10)), random(.5, 10) * Math.sin(360 / i) * 9);
+              scene.add(cube)
+            }
+            let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+            let yellowMaterial = new THREE.MeshBasicMaterial({ color: 0xfff000, transparent: true, opacity: 0.5 });
+            let cube = new THREE.Mesh(geometry, yellowMaterial);
+            scene.add(cube)
+            let innerCubeGeometry = new THREE.BoxBufferGeometry(.5, .5, .5);
+            let innerCubeMaterial = new THREE.MeshNormalMaterial();
+            innerCube = new THREE.Mesh(innerCubeGeometry, innerCubeMaterial);
+            scene.add(innerCube)
+            break;
+          case '4':
+            waves = new THREE.Group();
+            let waveMaterial = new THREE.MeshNormalMaterial();
+            for (let i = -1; i < 2; i++) {
+              for (let j = -1; j < 2; j++) {
+                let wave;
+                if (i === j && i === 0 && j === 0) {
+                  wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'second'), 100, .7, 40, false), waveMaterial);
+                } else {
+                  wave = new THREE.Mesh(new THREE.TubeBufferGeometry(new CustomSinCurve(10, 'first'), 100, .7, 40, false), waveMaterial);
+                }
+                wave.position.set(wave.position.x - i * 30, wave.position.y - j * 30, wave.position.z);
+                waves.add(wave);
               }
+            }
+            scene.add(waves);
             break;
-            default:
+          case '5':
+            scene.background = new THREE.Color(0x260516);
+            conesGroup = new THREE.Group(3, 64, 64);
+            document.removeEventListener('mousemove', onDocumentMouseMove, true);
+            generateConesGroup(600);
+            let calmGeometry = new THREE.SphereGeometry();
+            let calmMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
+            let calmSphere = new THREE.Mesh(calmGeometry, calmMaterial);
+            scene.add(conesGroup)
+            scene.add(calmSphere);
             break;
-          }
-        })
+          default:
+            break;
+        }
       })
+    })
   </script>
 </body>
 
