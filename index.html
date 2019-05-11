@@ -55,26 +55,20 @@
   </div>
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
+  <script src="js/helpers.js"></script>
+  <script src="js/classes.js"></script>
   <script>
-    let aphorism = '1';
-    let renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-    let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
-    camera.position.set(0, 0, 100);
-    camera.lookAt(0, 0, 0);
-    let controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enabled = true;
-    controls.enableKeys = true;
-    controls.keys = {
-      LEFT: 65, //left arrow
-      UP: 87, // up arrow
-      RIGHT: 68, // right arrow
-      BOTTOM: 83 // down arrow
-    }
-    controls.minDistance = 0;
-    controls.maxDistance = 150;
-    controls.update();
+    
+
+    /************/
+    /* CONSTANTS */
+    /************/
+    const ROTATION_SPEED = .01;
+    const lifeCubeGroup = new THREE.Group();
+
+    /*************/
+    /* VARIABLES */
+    /*************/
     let mouseX = 0;
     let mouseY = 0;
     let windowHalfX = window.innerWidth / 2;
@@ -84,113 +78,26 @@
     let lifeCubes = new THREE.Group();
     let waves = new THREE.Group();
     let conesGroup = new THREE.Group();
-    const ROTATION_SPEED = .01;
     let pinkPlanetGroup;
     let greenPlanetGroup;
     let innerCube;
+    let aphorism = '1';
+    let renderer = new THREE.WebGLRenderer();
+    let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+    let controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    function CustomSinCurve(scale, type) {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-      THREE.Curve.call(this);
-
-      this.scale = (scale === undefined) ? 1 : scale;
-      this.type = type;
-    }
-
-    CustomSinCurve.prototype = Object.create(THREE.Curve.prototype);
-    CustomSinCurve.prototype.constructor = CustomSinCurve;
-
-    CustomSinCurve.prototype.getPoint = function (t) {
-      let tx = 1 * t * 3 - 1.5;
-      let ty = 0;
-      if (this.type === 'first') {
-        ty = Math.cos(Math.sin(time / 5) * Math.PI * t) * Math.sin(Math.cos(time / 5) * Math.PI * t);
-      } else if (this.type === 'second') {
-        ty = Math.cos(Math.cos(time / 5) * Math.PI * t) * Math.sin(Math.sin(time / 5) * Math.PI * t);
-      }
-      let tz = 1;
-
-      return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
-
-    };
-
-    const random = (min, max) => {
-      return Math.random() * (+max - +min) + +min;
-    }
-
-    const lifeCubeGroup = new THREE.Group();
-      for (let i = 0; i < 7; i++) {
-        let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-        let material = new THREE.MeshNormalMaterial();
-        let cube = new THREE.Mesh(geometry, material);
-        cube.position.set(i * 2, i * i / 4, 0);
-        lifeCubeGroup.add(cube);
-        
-      }
-
-    const generateLifeCubes = (count) => {
-      for (let i = 0; i < count; i++) {
-        let cloneLifeCubeGroup = lifeCubeGroup.clone(true);
-        cloneLifeCubeGroup.position.set(random(-200, 200), random(-200, 200), random(-200, 200))
-        scene.add(cloneLifeCubeGroup)
-      }
-    }
-
-    const generateStars = (count) => {
-      for (let i = 0; i < count; i++) {
-        let geometry = new THREE.BoxBufferGeometry(.1, .1, .1);
-        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        let cube = new THREE.Mesh(geometry, material);
-        cube.position.set(random(-100, 100), random(-100, 100), random(-100, 100));
-        scene.add(cube);
-      }
-    }
-
-    const rotateInnerCube = () => {
-      innerCube.rotation.x -= ROTATION_SPEED * 3;
-      innerCube.rotation.y -= ROTATION_SPEED;
-      innerCube.rotation.z -= ROTATION_SPEED;
-    }
-
-    const generatePlanetary = () => {
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
-      pinkPlanetGroup = new THREE.Group();
-      greenPlanetGroup = new THREE.Group();
-      let sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshBasicMaterial({ color: 0xf00fff, transparent: true, opacity: 0.5 }));
-      pinkPlanetGroup.add(sphere);
-      sphere = new THREE.Mesh(new THREE.SphereGeometry(2, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-      pinkPlanetGroup.add(sphere);
-      sphere = new THREE.Mesh(new THREE.SphereGeometry(7, 20, 20), new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 }));
-      greenPlanetGroup.add(sphere);
-      sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 20, 20), new THREE.MeshNormalMaterial({ side: THREE.BackSide }));
-      greenPlanetGroup.add(sphere);
-      scene.add(pinkPlanetGroup)
-      scene.add(greenPlanetGroup)
-      generateStars(1500);
-    }
-
-    const generateConesGroup = (count) => {
-      for (let j = 0; j < count; j++) {
-        const subConeGroup = new THREE.Group();
-        for (let i = 0; i < 6; i++) {
-          let coneGeometry = new THREE.ConeBufferGeometry(1, 2, 64)
-          let material = new THREE.MeshNormalMaterial();
-          let cone = new THREE.Mesh(coneGeometry, material);
-          cone.rotation.z = i;
-          cone.position.x = Math.cos(Math.PI * 360 / i) * -3;
-          cone.position.y = Math.sin(Math.PI * 360 / i) * -3;
-          subConeGroup.add(cone);
-        }
-        subConeGroup.position.set(Math.round(random(-100, 100)), Math.round(random(-100, 100)), 0)
-        conesGroup.add(subConeGroup)
-      }
-    }
+    camera.position.set(0, 0, 100);
+    camera.lookAt(0, 0, 0);
+    controls.enabled = false;
+    controls.minDistance = 0;
+    controls.maxDistance = 150;
+    controls.update();
 
     // Generate Planetary
     generatePlanetary();
-
-
 
     let renderAphorism = (aphorism) => {
       if (aphorism === '1') {
@@ -236,14 +143,6 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
-    window.addEventListener('resize', onWindowResize, false);
-    document.addEventListener('mousemove', onDocumentMouseMove, true);
-    document.addEventListener('mousedown', () => {
-      document.removeEventListener('mousemove', onDocumentMouseMove, true);
-    }, false);
-    document.addEventListener('mouseup', () => {
-      document.addEventListener('mousemove', onDocumentMouseMove, true);
-    }, false);
 
     Array.from(document.getElementsByClassName('aphorism-container')).forEach((element) => {
       element.addEventListener('click', (e) => {
@@ -252,7 +151,6 @@
         aphorism = selectedContainer.id;
         scene = new THREE.Scene();
         document.addEventListener('mousemove', onDocumentMouseMove, true);
-        // camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
         camera.position.set(0, 0, 100);
         camera.lookAt(0, 0, 0);
         switch (aphorism) {
@@ -261,6 +159,13 @@
             break;
           case '2':
             scene.background = new THREE.Color(0xffb085);
+            for (let i = 0; i < 7; i++) {
+              let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+              let material = new THREE.MeshNormalMaterial();
+              let cube = new THREE.Mesh(geometry, material);
+              cube.position.set(i * 2, i * i / 4, 0);
+              lifeCubeGroup.add(cube);
+            }
             generateLifeCubes(4000);
             break;
           case '3':
@@ -283,7 +188,6 @@
           case '4':
             scene.background = new THREE.Color(0x260516);
             conesGroup = new THREE.Group(3, 64, 64);
-            document.removeEventListener('mousemove', onDocumentMouseMove, true);
             generateConesGroup(600);
             let calmGeometry = new THREE.SphereGeometry();
             let calmMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
@@ -294,8 +198,18 @@
           default:
             break;
         }
-      })
-    })
+      });
+    });
+
+    // Handling window and document event listeners
+    window.addEventListener('resize', onWindowResize, false);
+    document.addEventListener('mousemove', onDocumentMouseMove, true);
+    document.addEventListener('mousedown', () => {
+      document.removeEventListener('mousemove', onDocumentMouseMove, true);
+    }, false);
+    document.addEventListener('mouseup', () => {
+      document.addEventListener('mousemove', onDocumentMouseMove, true);
+    }, false);
   </script>
 </body>
 
