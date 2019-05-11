@@ -1,5 +1,5 @@
 # Aida Mitsuo Aphorisms
-You can read the aphorisms and experience the visual at [aidamitsuo.surge.sh](aidamitsuo.surge.sh)
+You can read the aphorisms and experience the visual at [aidamitsuo.surge.sh](http://aidamitsuo.surge.sh)
 
 ## Description 📝
 An in-browser visual art experience to represent some of the most popular aphorisms created by world-renowned calligrapher Aida Mitsuo.
