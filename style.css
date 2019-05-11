@@ -1,59 +1,68 @@
 body {
-      margin: 0;
-      background-color: #ffffff;
-      font-family: 'Avenir';
-      user-select: none;
-      overflow: hidden;
-    }
+    margin: 0;
+    background-color: #ffffff;
+    color: white;
+    font-family: 'Avenir';
+    user-select: none;
+    overflow: hidden;
+  }
 
-    canvas {
-      width: 100%;
-      height: 100%
-    }
+  canvas {
+    width: 100%;
+    height: 100%
+  }
 
-    h1 {
-      padding-left: 30px;
-    }
+  h1 {
+    padding-left: 30px;
+  }
 
-    .aphorisms-container {
-      position: absolute;
-      overflow-y: scroll;
-      height: 100%;
-      color: white;
-    }
+  .aphorisms-container {
+    position: absolute;
+    overflow-y: scroll;
+    height: 100%;
+    color: white;
+  }
 
-    .aphorism-container {
-      border: 1px solid white;
-      background-color: black;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 40px;
-      padding: 0 30px;
-      width: 17vw;
-      min-width: 400px;
-    }
+  .aphorism-container {
+    border: 1px solid white;
+    background-color: black;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 40px;
+    padding: 0 30px;
+    width: 17vw;
+    min-width: 400px;
+  }
+  
+  .controls-container {
+    position: absolute;
+    right: 0;
+  }
+  h2 {
+    position: relative;
+    top: -20px;
+    background-color: black;
+    width: fit-content;
+    padding: 0 5px;
+    border: 1px solid white;
+    border-radius: 5px;
+    margin: 0;
+  }
 
-    h2 {
-      position: relative;
-      top: -20px;
-      background-color: black;
-      width: fit-content;
-      padding: 0 5px;
-      border: 1px solid white;
-      border-radius: 5px;
-      margin: 0;
-    }
+  h3 {
+    margin-bottom: 0;
+    color: rgb(156, 216, 249);
+  }
 
-    h3 {
-      margin-bottom: 0;
-      color: rgb(156, 216, 249);
-    }
+  h4 {
+    margin-top: 5px;
+  }
 
-    h4 {
-      margin-top: 5px;
-    }
+  h3:hover {
+    color: #260516;
+    color: rgb(101, 201, 255);
+  }
 
-    h3:hover {
-      color: #260516;
-      color: rgb(101, 201, 255);
-    }
+  li {
+    list-style: square;
+  }

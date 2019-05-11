@@ -53,6 +53,13 @@
       <h4>It's not people's issue, it's your issue</h4>
     </div>
   </div>
+  <div class="controls-container aphorism-container">
+    <h2>Controls</h2>
+    <ul>
+      <li>Move your mouse around to shift around the space</li>
+      <li>Click and drag to 'fling' the camera</li>
+    </ul>
+  </div>
   <script src="js/three.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script src="js/helpers.js"></script>
@@ -149,26 +156,30 @@
         let selectedContainer = e.target;
         if (e.target.tagName === 'H3') selectedContainer = e.target.parentNode
         aphorism = selectedContainer.id;
-        scene = new THREE.Scene();
         document.addEventListener('mousemove', onDocumentMouseMove, true);
         camera.position.set(0, 0, 100);
         camera.lookAt(0, 0, 0);
         switch (aphorism) {
           case '1':
+            scene = new THREE.Scene();
             generatePlanetary();
             break;
           case '2':
+          if (lifeCubeGroup.children.length < 8) {
+            scene = new THREE.Scene();
             scene.background = new THREE.Color(0xffb085);
-            for (let i = 0; i < 7; i++) {
-              let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-              let material = new THREE.MeshNormalMaterial();
-              let cube = new THREE.Mesh(geometry, material);
-              cube.position.set(i * 2, i * i / 4, 0);
-              lifeCubeGroup.add(cube);
+              for (let i = 0; i < 7; i++) {
+                let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+                let material = new THREE.MeshNormalMaterial();
+                let cube = new THREE.Mesh(geometry, material);
+                cube.position.set(i * 2, i * i / 4, 0);
+                lifeCubeGroup.add(cube);
+              }
+              generateLifeCubes(4000);
             }
-            generateLifeCubes(4000);
             break;
           case '3':
+            scene = new THREE.Scene();
             waves = new THREE.Group();
             let waveMaterial = new THREE.MeshNormalMaterial();
             for (let i = -1; i < 2; i++) {
@@ -186,6 +197,7 @@
             scene.add(waves);
             break;
           case '4':
+            scene = new THREE.Scene();
             scene.background = new THREE.Color(0x260516);
             conesGroup = new THREE.Group(3, 64, 64);
             generateConesGroup(600);
